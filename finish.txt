@@ -1,0 +1,404 @@
+package Trabson;
+
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JTextField;
+
+public class Algoritmos extends JFrame {
+
+	private JPanel contentPane;
+	JRadioButton rdbtnCutRod, rdbtnGreedyActivitySelection,rdbtnBottomUpCut,rdbtnMemoizedCutRod;
+	Path path;
+	File file;
+	private JTextField tamanho;
+	JTextArea texto;
+	int[] vetor, vetorF, aux, auxI;
+	int n;
+	String var = "";
+	JTextArea resultado;
+	
+
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Algoritmos frame = new Algoritmos();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	public Algoritmos() {
+		setTitle("T R A B S O N");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		
+		JLabel lblAnliseDeAlgoritmos = new JLabel("Análise de Algoritmos");
+		lblAnliseDeAlgoritmos.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblAnliseDeAlgoritmos.setBounds(106, 11, 225, 30);
+		contentPane.add(lblAnliseDeAlgoritmos);
+		
+		JLabel lblTamanho = new JLabel("Tamanho");
+		lblTamanho.setBounds(348, 48, 64, 14);
+		contentPane.add(lblTamanho);
+		
+		tamanho = new JTextField();
+		tamanho.setBounds(338, 62, 86, 20);
+		contentPane.add(tamanho);
+		tamanho.setColumns(10);
+		
+		rdbtnMemoizedCutRod = new JRadioButton("Memoized Cut Rod");
+		rdbtnMemoizedCutRod.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				rdbtnCutRod.setSelected(false);
+				rdbtnBottomUpCut.setSelected(false);
+				rdbtnGreedyActivitySelection.setSelected(false);
+			}
+		});
+		rdbtnMemoizedCutRod.setBounds(22, 48, 139, 23);
+		contentPane.add(rdbtnMemoizedCutRod);
+		
+		rdbtnBottomUpCut = new JRadioButton("Bottom Up Cut Rod");
+		rdbtnBottomUpCut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				rdbtnMemoizedCutRod.setSelected(false);
+				rdbtnCutRod.setSelected(false);
+				rdbtnGreedyActivitySelection.setSelected(false);
+			}
+		});
+		rdbtnBottomUpCut.setBounds(163, 48, 134, 23);
+		contentPane.add(rdbtnBottomUpCut);
+		
+		rdbtnGreedyActivitySelection = new JRadioButton("Greedy Activity Selection");
+		rdbtnGreedyActivitySelection.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				rdbtnMemoizedCutRod.setSelected(false);
+				rdbtnCutRod.setSelected(false);
+				rdbtnBottomUpCut.setSelected(false);
+			}
+		});
+		rdbtnGreedyActivitySelection.setBounds(163, 77, 168, 23);
+		contentPane.add(rdbtnGreedyActivitySelection);
+		
+		rdbtnCutRod = new JRadioButton("Cut Rod");
+		rdbtnCutRod.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				rdbtnMemoizedCutRod.setSelected(false);
+				rdbtnBottomUpCut.setSelected(false);
+				rdbtnGreedyActivitySelection.setSelected(false);
+			}
+		});
+		rdbtnCutRod.setBounds(22, 77, 109, 23);
+		contentPane.add(rdbtnCutRod);
+		
+		texto = new JTextArea();
+		texto.setBounds(10, 140, 212, 112);
+		contentPane.add(texto);
+		
+		JScrollPane scroll = new JScrollPane(texto);
+		scroll.setBounds(10, 140, 212, 112);
+		contentPane.add(scroll);
+		
+		resultado = new JTextArea();
+		resultado.setFont(new Font("Tahoma", Font.PLAIN, 40));
+		resultado.setBounds(233, 140, 191, 111);
+		contentPane.add(resultado);
+		
+		JButton botao = new JButton("Importar");
+		botao.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser c = new JFileChooser();
+				c.showOpenDialog(null);
+				file = c.getSelectedFile();
+				try{
+					path = Paths.get(file.getAbsolutePath());
+					String retorno = new String(Files.readAllBytes(path));
+					texto.setText(retorno);
+				} catch(Exception erro){
+					JOptionPane.showMessageDialog(null, "Não conseguimos carregar seu arquivo");
+				}
+			}
+		});
+		botao.setBounds(64, 106, 89, 23);
+		contentPane.add(botao);
+		
+		JButton botaoDois = new JButton("Gerar Resultado");
+		botaoDois.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(rdbtnMemoizedCutRod.isSelected()){
+					lerArquivo();
+					String x = Integer.toString(memoizedCutRod(vetor, n));
+					resultado.setText(x);
+
+				}else if(rdbtnBottomUpCut.isSelected()){
+					lerArquivo();
+					String x = Integer.toString(bottonUpCutRod(vetor, n));
+					resultado.setText(x);
+			
+				}else if(rdbtnCutRod.isSelected()){
+					lerArquivo();
+					String x = Integer.toString(cutRod(vetor, n));
+					resultado.setText(x);
+
+				}else if(rdbtnGreedyActivitySelection.isSelected()){
+					lerArquivoDois();
+					n = vetor.length;
+					greedyActivitySelection(vetor, vetorF, n);
+					
+					
+				}else{
+					JOptionPane.showMessageDialog(null, "ERRO");
+				}
+				
+			}
+		});
+		botaoDois.setBounds(266, 107, 128, 23);
+		contentPane.add(botaoDois);
+
+	}
+	
+	private void lerArquivo(){
+		ArrayList<String> valor = new ArrayList<String>();
+		try {
+			FileReader leitorDeArquivo = new FileReader(file);
+			BufferedReader bufferDeArquivo = new BufferedReader(leitorDeArquivo);
+			while(true){
+				String aux = bufferDeArquivo.readLine();
+		
+				if(aux == null){
+					break;
+				}
+				valor.add(aux);
+			}
+		String tm = tamanho.getText();
+		ArrayList<Integer> valores = new ArrayList<Integer>(valor.size());
+		for(String myInt : valor){
+			valores.add(Integer.valueOf(myInt));
+		}
+		valores.add(Integer.valueOf(tm));
+		vetor = new int[valores.size()];
+		for(int i = 0; i < valores.size(); i++){
+			if(i < valores.size() - 1 ){
+				vetor[i] = valores.get(i);
+			}else{
+				n = (int)valores.get(i);
+			}
+		}
+			
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (NumberFormatException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}				
+	}
+	
+    private int cutRod(int[] p, int n){
+        if (n == 0)
+            return 0;
+        int q = 0;
+        for (int i = 1; i <= n; i++){
+            int aux = p[i - 1] + cutRod(p, n - i);
+            if(q < aux){
+                q = aux;
+            }
+        }
+        return q;
+    }
+    
+    private int memoizedCutRod(int[] p, int n){
+        int[] r = new int[n];
+        for (int i = 0; i < n; i++){
+            r[i] = Integer.MIN_VALUE;
+        }
+        return memoizedCutRodAux(p, n, r);
+    }
+
+    private int memoizedCutRodAux(int[] p, int n, int[] r){
+        int q;
+        if (n > 0 && r[n - 1] >= 0){
+            return r[n - 1];
+        }
+        if (n == 0){
+            q = 0;
+        }
+        else{
+            q = Integer.MIN_VALUE;
+            for (int i = 1; i <= n; i++){
+                int aux = p[i - 1] + memoizedCutRodAux(p, n - i, r);
+                if (q < aux)
+                {
+                    q = aux;
+                }
+            }
+            r[n - 1] = q;
+        }
+        return q;
+    } 
+    
+    private int bottonUpCutRod(int[] p, int n){
+        int q;
+        int[] r = new int[n + 1];
+        r[0] = 0;
+        for (int j = 1; j <= n; j++){
+            q = 0;
+            for (int i = 1; i <= j; i++){
+                int aux = p[i - 1] + r[j - i];
+                if (q < aux){
+                    q = aux;
+                }
+            }
+            r[j] = q;
+        }
+        return r[n];
+    }
+    
+    public void greedyActivitySelection(int s[], int f[], int n)
+    {
+    int i, j;
+    var = "Seguinte atividades foram selecionadas: \n";
+    i = 0;
+    var += i + "\n";
+    for (j = 1; j < n; j++){
+         if (s[j] >= f[i]){
+             var += j + "\n"; 
+              i = j;
+         }
+     }
+    	resultado.setFont(new Font("Tahoma", Font.PLAIN, 12));
+    	resultado.setText(var);
+    }
+    
+    private void lerArquivoDois(){
+		ArrayList<String> valor = new ArrayList<String>();
+		try {
+			FileReader leitorDeArquivo = new FileReader(file);
+			BufferedReader bufferDeArquivo = new BufferedReader(leitorDeArquivo);
+			while(true){
+				String aux = bufferDeArquivo.readLine();
+				if(aux == null){
+					break;
+				}
+				valor.add(aux);
+			}
+		ArrayList<Integer> valoresI = new ArrayList<Integer>(valor.size());
+		ArrayList<Integer> valoresF = new ArrayList<Integer>(valor.size());
+		for(String myInt : valor){
+			valoresI.add(Integer.valueOf(myInt.substring(0, myInt.indexOf(" "))));
+			valoresF.add(Integer.valueOf(myInt.substring((myInt.indexOf(" ") + 1))));
+		}
+		vetor = new int[valoresI.size()];
+		vetorF = new int[valoresF.size()];
+		aux = new int[valoresI.size()];
+		auxI= new int[valoresI.size()];
+		for(int i = 0; i < valoresI.size(); i++){
+				vetor[i] = valoresI.get(i);
+				vetorF[i] = valoresF.get(i);
+				aux[i] = valoresF.get(i);
+		}	
+		aux = sort(aux);		
+		for(int i = 0; i < vetor.length; i++){
+			for(int j = 0; j < vetor.length; j++){
+				if(vetorF[i] == aux[j]){
+					auxI[j] = vetor[i];
+					aux[j] = -1;
+					break;
+				}
+			}
+		}
+		vetorF = sort(vetorF);
+		for(int i = 0; i <vetor.length; i++){
+			vetor[i] = auxI[i];
+		}
+		
+		for(int i = 0; i <vetor.length; i++){
+
+			var += vetor[i] + " " + vetorF[i] + "\n";
+		}
+
+		texto.setText(var);
+			
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (NumberFormatException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}				
+	}
+    
+    public int[] sort(int[] array){
+        mergeSort(array, 0, array.length - 1);
+        return array;
+    }
+
+    private void mergeSort(int[] array, int p, int r){
+    	if(p < r){
+            int q = (p + r) / 2;
+            mergeSort(array, p, q);
+            mergeSort(array, q + 1, r);
+            merge(array, p, q, r);	
+    	}
+    }
+	
+	private void merge(int[] array, int p, int q, int r){
+        int n1 = q - p + 1;
+        int n2 = r - q;
+        
+        int[] left = new int[n1 + 1];
+        int[] right = new int[n2 + 1];
+
+        for(int i = 0; i < n1; i++){
+            left[i] = array[p + i];
+        }
+
+        for(int j = 0; j < n2; j++){
+            right[j] = array[q + j + 1];
+        }
+
+        left[n1] = Integer.MAX_VALUE;
+        right[n2] = Integer.MAX_VALUE;
+
+        for(int i = 0,  j = 0,  k = p; k <= r; k++){
+            if(left[i] <= right[j]){
+                array[k] = left[i++];
+            }else{
+                array[k] = right[j++];
+            }
+        }
+    }
+    
+    
+}
