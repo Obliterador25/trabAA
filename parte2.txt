@@ -1,0 +1,274 @@
+Classe pública Algoritmos estende JFrame {
+
+	Privado JPanel contentPane;
+	JRadioButton rdbtnCutRod, rdbtnGreedyActivitySelection, rdbtnBottomUpCut, rdbtnMemoizedCutRod;
+	Caminho caminho;
+	Arquivo de arquivo;
+	JTextField tamanho privado;
+	JTextArea texto;
+	Int [] vetor, vetorF, aux, auxI;
+	Int n;
+	String var = "";
+	JTextArea resultado;
+	
+
+	Public static void main (String [] args) {
+		EventQueue.invokeLater (new Runnable () {
+			Public void executar () {
+				experimentar {
+					Algoritmos frame = new Algoritmos ();
+					Frame.setVisible (true);
+				} Catch (Exceção e) {
+					E.printStackTrace ();
+				}
+			}
+		});
+	}
+
+	Public Algoritmos () {
+		SetTitle ("TRABSO N");
+		SetDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+		SetBounds (100, 100, 450, 300);
+		ContentPane = novo JPanel ();
+		ContentPane.setBorder (novo EmptyBorder (5, 5, 5, 5));
+		SetContentPane (contentPane);
+		ContentPane.setLayout (null);
+		
+		
+		JLabel lblAnliseDeAlgoritmos = nova JLabel ("Análise de Algoritmos");
+		LblAnliseDeAlgoritmos.setFont (nova fonte ("Tahoma", Font.BOLD, 20));
+		LblAnliseDeAlgoritmos.setBounds (106, 11, 225, 30);
+		ContentPane.add (lblAnliseDeAlgoritmos);
+		
+		JLabel lblTamanho = novo JLabel ("Tamanho");
+		LblTamanho.setBounds (348, 48, 64, 14);
+		ContentPane.add (lblTamanho);
+		
+		Tamanho = new JTextField ();
+		Tamanho.setBounds (338, 62, 86, 20);
+		ContentPane.add (tamanho);
+		Tamanho.setColumns (10);
+		
+		RdbtnMemoizedCutRod = novo JRadioButton ("Memoized Cut Rod");
+		RdbtnMemoizedCutRod.addActionListener (new ActionListener () {
+			Public void actionPerformed (ActionEvent e) {
+				RdbtnCutRod.setSelected (false);
+				RdbtnBottomUpCut.setSelected (false);
+				RdbtnGreedyActivitySelection.setSelected (false);
+			}
+		});
+		RdbtnMemoizedCutRod.setBounds (22, 48, 139, 23);
+		ContentPane.add (rdbtnMemoizedCutRod);
+		
+		RdbtnBottomUpCut = new JRadioButton ("Barra de corte inferior para baixo");
+		RdbtnBottomUpCut.addActionListener (new ActionListener () {
+			Public void actionPerformed (ActionEvent e) {
+				RdbtnMemoizedCutRod.setSelected (false);
+				RdbtnCutRod.setSelected (false);
+				RdbtnGreedyActivitySelection.setSelected (false);
+			}
+		});
+		RdbtnBottomUpCut.setBounds (163, 48, 134, 23);
+		ContentPane.add (rdbtnBottomUpCut);
+		
+		RdbtnGreedyActivitySelection = new JRadioButton ("Seleção de atividade gananciosa");
+		RdbtnGreedyActivitySelection.addActionListener (new ActionListener () {
+			Public void actionPerformed (ActionEvent e) {
+				RdbtnMemoizedCutRod.setSelected (false);
+				RdbtnCutRod.setSelected (false);
+				RdbtnBottomUpCut.setSelected (false);
+			}
+		});
+		RdbtnGreedyActivitySelection.setBounds (163, 77, 168, 23);
+		ContentPane.add (rdbtnGreedyActivitySelection);
+		
+		RdbtnCutRod = novo JRadioButton ("Cut Rod");
+		RdbtnCutRod.addActionListener (new ActionListener () {
+			Public void actionPerformed (ActionEvent arg0) {
+				RdbtnMemoizedCutRod.setSelected (false);
+				RdbtnBottomUpCut.setSelected (false);
+				RdbtnGreedyActivitySelection.setSelected (false);
+			}
+		});
+		RdbtnCutRod.setBounds (22, 77, 109, 23);
+		ContentPane.add (rdbtnCutRod);
+		
+		Texto = new JTextArea ();
+		Texto.setBounds (10, 140, 212, 112);
+		ContentPane.add (texto);
+		
+		JScrollPane scroll = new JScrollPane (texto);
+		Scroll.setBounds (10, 140, 212, 112);
+		ContentPane.add (scroll);
+		
+		Resultado = new JTextArea ();
+		Resultado.setFont (nova Fonte ("Tahoma", Font.PLAIN, 40));
+		Resultado.setBounds (233, 140, 191, 111);
+		ContentPane.add (resultado);
+		
+		JButton botao = new JButton ("Importar");
+		Botao.addActionListener (new ActionListener () {
+			Public void actionPerformed (ActionEvent e) {
+				JFileChooser c = new JFileChooser ();
+				C.showOpenDialog (null);
+				File = c.getSelectedFile ();
+				experimentar{
+					Path = Paths.get (file.getAbsolutePath ());
+					String retorno = new String (Files.readAllBytes (caminho));
+					Texto.setText (retorno);
+				} Catch (erro de exceção) {
+					JOptionPane.showMessageDialog (null, "Não conseguimos carregar seu arquivo");
+				}
+			}
+		});
+		Botao.setBounds (64, 106, 89, 23);
+		ContentPane.add (botao);
+		
+		JButton botaoDois = novo JButton ("Gerar Resultado");
+		BotaoDois.addActionListener (new ActionListener () {
+			Public void actionPerformed (ActionEvent e) {
+				
+				If (rdbtnMemoizedCutRod.isSelected ()) {
+					LerArquivo ();
+					Cadeia x = Integer.toString (memoizedCutRod (vetor, n));
+					Resultado.setText (x);
+
+				} Else if (rdbtnBottomUpCut.isSelected ()) {
+					LerArquivo ();
+					Cadeia x = Integer.toString (bottonUpCutRod (vetor, n));
+					Resultado.setText (x);
+			
+				} Else if (rdbtnCutRod.isSelected ()) {
+					LerArquivo ();
+					Cadeia x = Integer.toString (cutRod (vetor, n));
+					Resultado.setText (x);
+
+				} Else if (rdbtnGreedyActivitySelection.isSelected ()) {
+					LerArquivoDois ();
+					N = vetor.length;
+					GreedyActivitySelection (vetor, vetorF, n);
+					
+					
+				}outro{
+					JOptionPane.showMessageDialog (null, "ERRO");
+				}
+				
+			}
+		});
+		BotaoDois.setBounds (266, 107, 128, 23);
+		ContentPane.add (botaoDois);
+
+	}
+	private void lerArquivo(){
+		ArrayList<String> valor = new ArrayList<String>();
+		try {
+			FileReader leitorDeArquivo = new FileReader(file);
+			BufferedReader bufferDeArquivo = new BufferedReader(leitorDeArquivo);
+			while(true){
+				String aux = bufferDeArquivo.readLine();
+		
+				if(aux == null){
+					break;
+				}
+				valor.add(aux);
+			}
+		String tm = tamanho.getText();
+		ArrayList<Integer> valores = new ArrayList<Integer>(valor.size());
+		for(String myInt : valor){
+			valores.add(Integer.valueOf(myInt));
+		}
+		valores.add(Integer.valueOf(tm));
+		vetor = new int[valores.size()];
+		for(int i = 0; i < valores.size(); i++){
+			if(i < valores.size() - 1 ){
+				vetor[i] = valores.get(i);
+			}else{
+				n = (int)valores.get(i);
+			}
+		}
+			
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (NumberFormatException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}				
+	}
+	
+    private int cutRod(int[] p, int n){
+        if (n == 0)
+            return 0;
+        int q = 0;
+        for (int i = 1; i <= n; i++){
+            int aux = p[i - 1] + cutRod(p, n - i);
+            if(q < aux){
+                q = aux;
+            }
+        }
+        return q;
+    }
+    
+    private int memoizedCutRod(int[] p, int n){
+        int[] r = new int[n];
+        for (int i = 0; i < n; i++){
+            r[i] = Integer.MIN_VALUE;
+        }
+        return memoizedCutRodAux(p, n, r);
+    }
+
+    private int memoizedCutRodAux(int[] p, int n, int[] r){
+        int q;
+        if (n > 0 && r[n - 1] >= 0){
+            return r[n - 1];
+        }
+        if (n == 0){
+            q = 0;
+        }
+        else{
+            q = Integer.MIN_VALUE;
+            for (int i = 1; i <= n; i++){
+                int aux = p[i - 1] + memoizedCutRodAux(p, n - i, r);
+                if (q < aux)
+                {
+                    q = aux;
+                }
+            }
+            r[n - 1] = q;
+        }
+        return q;
+    } 
+    
+    private int bottonUpCutRod(int[] p, int n){
+        int q;
+        int[] r = new int[n + 1];
+        r[0] = 0;
+        for (int j = 1; j <= n; j++){
+            q = 0;
+            for (int i = 1; i <= j; i++){
+                int aux = p[i - 1] + r[j - i];
+                if (q < aux){
+                    q = aux;
+                }
+            }
+            r[j] = q;
+        }
+        return r[n];
+    }
+    
+    public void greedyActivitySelection(int s[], int f[], int n)
+    {
+    int i, j;
+    var = "Seguinte atividades foram selecionadas: \n";
+    i = 0;
+    var += i + "\n";
+    for (j = 1; j < n; j++){
+         if (s[j] >= f[i]){
+             var += j + "\n"; 
+              i = j;
+         }
+     }
+    	resultado.setFont(new Font("Tahoma", Font.PLAIN, 12));
+    	resultado.setText(var);
+    }
+    
